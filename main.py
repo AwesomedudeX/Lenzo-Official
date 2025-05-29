@@ -51,6 +51,7 @@ if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts'] 
             'phonenumbers': ['(825) 762-6822'],
             'passwords': ['1162008'],
             'names': ['Admin'],
+            'images': ['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']
         }
 
         write = f"accountdata = {st.session_state.accountdata}"
@@ -61,7 +62,6 @@ loginstatuscol = sidebar.columns(1)[0]
 loginexpander = sidebar.expander(":blue[**Sign In**]")
 
 loginchoice = loginexpander.radio("**Would you like to sign into an account, or sign up for an account?**", ["Sign In", "Sign Up"])
-accounts = st.session_state.accounts
 
 if loginchoice == "Sign In":
     
@@ -85,16 +85,17 @@ if loginchoice == "Sign Up":
 
     elif loginexpander.button(":green[**Sign Up**]", use_container_width=True):
 
-        if st.session_state.email in accounts["emails"]:
+        if st.session_state.email in st.session_state.accounts["emails"]:
             loginexpander.write("**An account with this email :red[already exists]. Please :blue[sign in] with this email, or create a :green[new] account.**")
 
         else:
 
-            st.session_state.accounts["ids"].append(len(accounts["ids"])+1)                
+            st.session_state.accounts["ids"].append(len(st.session_state.accounts["ids"])+1)              
             st.session_state.accounts["emails"].append(st.session_state.email)                
             st.session_state.accounts["phonenumbers"].append(st.session_state.phonenumber)
             st.session_state.accounts["passwords"].append(st.session_state.password)                
             st.session_state.accounts["names"].append(st.session_state.name)                
+            st.session_state.accounts["images"].append([])                
 
             try:
                 loginexpander.write("**Account created :green[successfully]! Please :blue[sign in] with your new **:blue[Lenzo]** account.**")                
@@ -115,22 +116,22 @@ else:
             
     if st.session_state.email != "" and st.session_state.password != "":
 
-            if st.session_state.email not in accounts["emails"]:
+            if st.session_state.email not in st.session_state.accounts["emails"]:
                 loginexpander.write("**Sorry, but we could :red[not] find your account. Please :blue[try again] with another email, or create a :green[new] account.**")
 
             else:
 
-                for i in range(len(accounts["ids"])):
+                for i in range(len(st.session_state.accounts["ids"])):
                 
-                    if st.session_state.email == accounts["emails"][i]:
+                    if st.session_state.email == st.session_state.accounts["emails"][i]:
                         
-                        if st.session_state.password == accounts['passwords'][i]:
+                        if st.session_state.password == st.session_state.accounts['passwords'][i]:
                             
-                            st.session_state.accountid = accounts['ids'][i]
+                            st.session_state.accountid = st.session_state.accounts['ids'][i]
                             st.session_state.name = st.session_state.accounts["names"][i]
                             st.session_state.phonenumber = st.session_state.accounts["phonenumbers"][i]
                             
-                            loginexpander.subheader(f":blue[Hello] {accounts['names'][st.session_state.accountid-1]}!")
+                            loginexpander.subheader(f":blue[Hello] {st.session_state.accounts['names'][st.session_state.accountid-1]}!")
 
                         else:
                             loginexpander.write("**:red[Incorrect] email/password. Please :blue[try again].**")
@@ -238,9 +239,11 @@ else:
 
                 if file.name[-4:] in [".png", ".jpg"]:
                     open(file.name, "wb").write(file.read())
+                    st.session_state.accounts['images'][st.session_state.accountid-1].append(file.name)
                     st.write(f"**:green[Successfully] uploaded :blue[{file.name}]**.")
                     img = Image.open(file.name)
                     st.image(img)
+
                 else:
                     st.write("**:red[Unsupported file type]. Please upload a .:blue[png] or .:blue[jpg] file.**")
 
@@ -276,30 +279,33 @@ else:
             photos = []
             maxcols = 5
 
-            for filename in os.listdir():
+            for filename in st.session_state.accounts['images'][st.session_state.accountid-1]:
+                photos.append(filename)
 
-                if filename[-4:] in [".png", ".jpg"] and filename != "logo.png" and filename[:-4] not in camcolors:
-                    photos.append(filename)
-
-            if len(photos) < 6:
+            if photos and len(photos) < 6:
                 maxcols = len(photos)
             
             numcols = sidebar.number_input("How many columns do you want to view these photos in?", 1, maxcols, step=1)
 
             st.write("---")
 
-            cols = st.columns(numcols)
-            colindex = 0
+            @st.cache_data()
+            def showPhotos(numcols):
 
-            for filename in photos:
-                
-                img = Image.open(filename)
-                cols[colindex].image(img, use_column_width=True)
+                cols = st.columns(numcols)
+                colindex = 0
+    
+                for filename in photos:
+                    
+                    img = Image.open(filename)
+                    cols[colindex].image(img, use_column_width=True, caption=filename)
 
-                colindex += 1
+                    colindex += 1
 
-                if colindex == numcols:
-                    colindex = 0
+                    if colindex == numcols:
+                        colindex = 0
+
+            showPhotos(numcols)
 
     if pageindex == 5:
         
@@ -344,12 +350,13 @@ else:
             for col in st.session_state.accounts:
                 st.session_state.accounts[col] = []
 
-            st.session_state.accounts = accountdata = {
+            st.session_state.accounts = {
                 'ids': [1],
                 'emails': ['admin@lenzo.com'],
                 'phonenumbers': ['(825) 762-6822'],
                 'passwords': ['1162008'],
                 'names': ['Admin'],
+                'images': ['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']
             }
 
             try:
