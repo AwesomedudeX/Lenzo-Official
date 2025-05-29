@@ -165,12 +165,17 @@ else:
 
     if pageindex == 3:
         
-        camprice = 299.99
-
         cols = st.columns(2)
+        c1 = cols[0].columns(2)
 
-        color = cols[0].selectbox("**Select your :blue[color]:**", camcolors)
+        color = c1[0].selectbox("**Select your :blue[color]:**", camcolors)
+        edition = c1[1].selectbox("**Select your camera :blue[version]:**", ["Lite", "Pro"])
         cols[0].expander("**:blue[Camera Preview]**").image(f"{color}.png")
+
+        if edition == "Lite":
+            camprice = 249.99
+        else:
+            camprice = 299.99
 
         st.header(":blue[Order] Information")
         
@@ -209,18 +214,19 @@ else:
 
         st.write("---")
         st.write(f"**:blue[LenzoCam]: ${camprice}**")
+        
+        st.write(f"**Subtotal: ${camprice}**")
+        st.write("**Tax: 15%**")
 
         if priority:
             prioritycost = 10
             delivertime = "1-3 business days."
-            st.write(f"**:green[Express Delivery]: ${prioritycost}**")
+            st.write(f"**:green[Express Delivery]: ${prioritycost}.00**")
         else:
             prioritycost = 0
             delivertime = "5-7 business days."
-        
-        st.write(f"**Subtotal: {camprice+prioritycost}**")
-        st.write("**Tax: 15%**")
-        st.write(f"**:red[Grand Total]: ${((camprice+prioritycost)*1.15)}**")
+
+        st.write(f"**:red[Grand Total]: ${round((camprice)*1.15+prioritycost, 2)}**")
         st.write(f"**:green[Delivery Time]: {delivertime}**")
 
         if not invalidpaymentinfo and st.button(":blue[**Order Now!**]"):
