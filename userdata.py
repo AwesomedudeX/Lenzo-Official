@@ -1,1 +1,1 @@
-accountdata = {'ids': [1], 'emails': ['admin@lenzo.com'], 'phonenumbers': ['(825) 762-6822'], 'passwords': ['1162008'], 'names': ['Admin']}
+accountdata = {'ids': [1], 'emails': ['admin@lenzo.com'], 'phonenumbers': ['(825) 762-6822'], 'passwords': ['1162008'], 'names': ['Admin'], 'images': []}
