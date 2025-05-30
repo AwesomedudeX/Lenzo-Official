@@ -400,7 +400,7 @@ else:
             }
 
             try:
-                sidebar.write("**User data :red[cleared] :green[successfully].**")
+                sidebar.write("**User data :red[reset] :green[successfully].**")
                 time.sleep(5)
                 savedata(st.session_state.accounts)
             except:
