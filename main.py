@@ -31,7 +31,9 @@ def savedata(data):
     write = f"accountdata = {data}"
     open("userdata.py", "w").write(write)
 
-if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts'] not in st.session_state:
+if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts', 'promptconfirm'] not in st.session_state:
+
+    st.session_state.promptconfirm = False
 
     st.session_state.accountid = 0
     st.session_state.email = ""
@@ -52,7 +54,7 @@ if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts'] 
             'phonenumbers': ['(825) 762-6822'],
             'passwords': ['1162008'],
             'names': ['Admin'],
-            'images': ['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']
+            'images': [['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']]
         }
 
         savedata(st.session_state.accountdata)
@@ -234,7 +236,7 @@ else:
 
     if pageindex == 4:
 
-        mode = sidebar.radio("**What do you want to do?**", ["**View :blue[My Photos]**", "**:red[Delete] Photos**", "**:green[Upload] Photos**"])
+        mode = sidebar.radio("**What do you want to do?**", ["**:blue[My Photos]**", "**:red[Delete] Photos**", "**:green[Upload] Photos**"])
 
         if mode == "**:green[Upload] Photos**":
 
@@ -297,6 +299,14 @@ else:
                         st.session_state.accounts['images'][st.session_state.accountid-1].pop(i)
                         break
 
+                sidebar.write("**Photo :red[Deleted] :green[Successfully].**")
+
+                try:
+                    time.sleep(5)
+                    savedata(st.session_state.accounts)
+                except:
+                    savedata(st.session_state.accounts)
+
             st.write("---")
 
             @st.cache_data()
@@ -325,7 +335,7 @@ else:
             if photos and len(photos) < 6:
                 maxcols = len(photos)
             
-            numcols = sidebar.number_input("How many columns do you want to view these photos in?", 1, maxcols, step=1)
+            numcols = sidebar.number_input("**How many columns do you want to view these photos in?**", 1, maxcols, step=1)
 
             st.write("---")
 
@@ -346,6 +356,11 @@ else:
                         colindex = 0
 
             showPhotos(photos, numcols)
+
+            photo = sidebar.selectbox("**Choose a photo to :blue[download]:**", photos)
+            
+            if sidebar.download_button("**:blue[Download Photo]**", open(photo, "rb").read(), photo):
+                sidebar.write("**Downloaded Photo :green[Successfully]!**")
 
     if pageindex == 5:
         
@@ -396,7 +411,7 @@ else:
                 'phonenumbers': ['(825) 762-6822'],
                 'passwords': ['1162008'],
                 'names': ['Admin'],
-                'images': ['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']
+                'images': [['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']]
             }
 
             try:
