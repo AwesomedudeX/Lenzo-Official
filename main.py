@@ -15,6 +15,7 @@ pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 sidebar = st.sidebar
 expander = st.expander
+refresh = sidebar.button(':red[**Refresh Page**]')
 
 pages = {
     "Homepage": 0,
@@ -45,7 +46,7 @@ if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts'] 
 
     except:
 
-        st.session_state.accounts = accountdata = {
+        st.session_state.accounts = {
             'ids': [1],
             'emails': ['admin@lenzo.com'],
             'phonenumbers': ['(825) 762-6822'],
@@ -54,9 +55,7 @@ if ['accountid', 'loginstatus', 'email', 'phonenumber', 'password', 'accounts'] 
             'images': ['Aged Gold.png', 'Chrome Silver.png', 'Carbon Black.png', 'Cold Steel.png']
         }
 
-        write = f"accountdata = {st.session_state.accountdata}"
-
-        open("userdata.py", "w").write(write)
+        savedata(st.session_state.accountdata)
 
 loginstatuscol = sidebar.columns(1)[0]
 loginexpander = sidebar.expander(":blue[**Sign In**]")
