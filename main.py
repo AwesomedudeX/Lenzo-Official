@@ -318,7 +318,7 @@ else:
                 for filename in photos:
                     
                     img = Image.open(filename)
-                    cols[colindex].image(img, use_column_width=True, caption=filename)
+                    cols[colindex].image(img, use_container_width=True, caption=filename)
 
                     colindex += 1
 
@@ -348,7 +348,7 @@ else:
                 for filename in photos:
                     
                     img = Image.open(filename)
-                    cols[colindex].image(img, use_column_width=True, caption=filename)
+                    cols[colindex].image(img, use_container_width=True, caption=filename)
 
                     colindex += 1
 
