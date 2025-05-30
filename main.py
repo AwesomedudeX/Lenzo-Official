@@ -234,7 +234,7 @@ else:
 
     if pageindex == 4:
 
-        mode = sidebar.radio("**What do you want to do?**", ["**View :blue[My Photos]**", "**:green[Upload] Photos**"])
+        mode = sidebar.radio("**What do you want to do?**", ["**View :blue[My Photos]**", "**:red[Delete] Photos**", "**:green[Upload] Photos**"])
 
         if mode == "**:green[Upload] Photos**":
 
@@ -279,23 +279,28 @@ else:
                 except:
                     st.write("**Upload :red[Canceled].**")
 
-        else:
+        elif mode == "**:red[Delete] Photos**":
 
-            photos = []
+            photos = st.session_state.accounts['images'][st.session_state.accountid-1]
             maxcols = 5
-
-            for filename in st.session_state.accounts['images'][st.session_state.accountid-1]:
-                photos.append(filename)
 
             if photos and len(photos) < 6:
                 maxcols = len(photos)
             
             numcols = sidebar.number_input("How many columns do you want to view these photos in?", 1, maxcols, step=1)
+            photo = sidebar.selectbox("**Which photo do you want to :red[delete]?**", photos)
+
+            if sidebar.button("**:red[Delete Photo]**"):
+
+                for i in range(len(photos)):
+                    if photos[i] == photo:
+                        st.session_state.accounts['images'][st.session_state.accountid-1].pop(i)
+                        break
 
             st.write("---")
 
             @st.cache_data()
-            def showPhotos(numcols):
+            def showPhotos(photos, numcols):
 
                 cols = st.columns(numcols)
                 colindex = 0
@@ -310,7 +315,37 @@ else:
                     if colindex == numcols:
                         colindex = 0
 
-            showPhotos(numcols)
+            showPhotos(photos, numcols)
+
+        else:
+
+            photos = st.session_state.accounts['images'][st.session_state.accountid-1]
+            maxcols = 5
+
+            if photos and len(photos) < 6:
+                maxcols = len(photos)
+            
+            numcols = sidebar.number_input("How many columns do you want to view these photos in?", 1, maxcols, step=1)
+
+            st.write("---")
+
+            @st.cache_data()
+            def showPhotos(photos, numcols):
+
+                cols = st.columns(numcols)
+                colindex = 0
+    
+                for filename in photos:
+                    
+                    img = Image.open(filename)
+                    cols[colindex].image(img, use_column_width=True, caption=filename)
+
+                    colindex += 1
+
+                    if colindex == numcols:
+                        colindex = 0
+
+            showPhotos(photos, numcols)
 
     if pageindex == 5:
         
@@ -350,7 +385,7 @@ else:
 
         st.dataframe(df, use_container_width=True, hide_index=True)
 
-        if sidebar.button("**:red[Clear User Data]**"):
+        if sidebar.button("**:red[Reset User Data]**"):
             
             for col in st.session_state.accounts:
                 st.session_state.accounts[col] = []
