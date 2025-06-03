@@ -237,6 +237,7 @@ else:
     if pageindex == 4:
 
         mode = sidebar.radio("**What do you want to do?**", ["**:blue[My Photos]**", "**:red[Delete] Photos**", "**:green[Upload] Photos**"])
+        photos = st.session_state.accounts['images'][st.session_state.accountid-1]
 
         if mode == "**:green[Upload] Photos**":
 
@@ -281,9 +282,11 @@ else:
                 except:
                     st.write("**Upload :red[Canceled].**")
 
+        elif (len(photos) == 0):
+            st.header("You don't have any photos yet!")
+
         elif mode == "**:red[Delete] Photos**":
 
-            photos = st.session_state.accounts['images'][st.session_state.accountid-1]
             maxcols = 5
 
             if photos and len(photos) < 6:
@@ -325,7 +328,10 @@ else:
                     if colindex == numcols:
                         colindex = 0
 
-            showPhotos(photos, numcols)
+            try:
+                showPhotos(photos, numcols)
+            except:
+                st.header("You don't have any photos yet!")
 
         else:
 
